@@ -1,6 +1,6 @@
 import numpy as np
 import cdd
-from TLLnet import TLLnet
+import TLLnet
 import volestipy
 import pickle
 import sys
@@ -119,7 +119,28 @@ def generateTLLExperimentFlat(instances,baseName='TLLExperiment',basePath=None,n
         importlib.reload(tf)
         importlib.reload(TLLnet)
 
-
+def addTLLAndPathToExisting(instances,baseName='TLLExperiment',basePath=None):
+    date_time = datetime.datetime.now().strftime('_%Y%m%d-%H%M%S')
+    if basePath == None:
+        basePath = './' + baseName + date_time
+    basePath = basePath.rstrip('/')
+    os.mkdir(basePath)
+    for k in range(len(instances)):
+        instances[k]['basePath'] = basePath
+        instances[k]['baseName'] = baseName + '_instance_' + str(k).zfill(int(np.log10(len(instances))+1)) + date_time
+        instances[k]['TLLnetwork'] = basePath + '/' + instances[k]['baseName'] + '.h5'
+        temp = {}
+        temp['localLinearFns'] = instances[k]['TLLparameters']['localLinearFunctions']
+        for out in range(len(temp['localLinearFns'])):
+            temp['localLinearFns'][out][0] = temp['localLinearFns'][out][0].T
+        temp['selectorSets'] = [ [ TLLnet.selectorMatrixToSet(sMat) for sMat in sOutputs] for sOutputs in instances[k]['TLLparameters']['selectorMatrices'] ]
+        temp['TLLFormatVersion'] = 1
+        tllExample = TLLnet.TLLnet.fromTLLFormat(instances[k] | temp)
+        tllExample.createKeras(incBias=True,flat=False)
+        tllExample.model.save(instances[k]['TLLnetwork'])
+        tllExample = 0
+        importlib.reload(tf)
+        importlib.reload(TLLnet)
 
 
 
@@ -174,28 +195,39 @@ if __name__=='__main__':
     # generateTLLExperiment(problemList[idx],baseName='TLLexper_n1m1N100M60_')
     # print('Done with PROBLEM LIST 0')
 
+    with open('sizeVsTime_n2_input.p','rb') as fp:
+        originalExperiment = pickle.load(fp)
+
+    problemList = originalExperiment[0:3]
+    for ii in range(len(problemList)):
+        problemList[ii] = problemList[ii][0:10]
+    
+    for idx in range(len(problemList)):
+        addTLLAndPathToExisting(problemList[idx],baseName='sizeVsTime_M='+str(problemList[idx][0]['M']))
+
+
     # Generate a list for this problem group:
-    problemList = [[{} for k in range(50)] for i in range(4)]
+    # problemList = [[{} for k in range(50)] for i in range(4)]
 
-    # PROBLEM LIST 0
-    idx = 0
-    generateTLLExperimentFlat(problemList[idx],baseName='TLLexper_n1m1N32M32_',n=1,m=1,N=32,M=32)
-    print('Done with PROBLEM LIST 0')
+    # # PROBLEM LIST 0
+    # idx = 0
+    # generateTLLExperimentFlat(problemList[idx],baseName='TLLexper_n1m1N32M32_',n=1,m=1,N=32,M=32)
+    # print('Done with PROBLEM LIST 0')
 
-    # PROBLEM LIST 0
-    idx = 1
-    generateTLLExperimentFlat(problemList[idx],baseName='TLLexper_n1m1N64M48_',n=1,m=1,N=64,M=48)
-    print('Done with PROBLEM LIST 0')
+    # # PROBLEM LIST 0
+    # idx = 1
+    # generateTLLExperimentFlat(problemList[idx],baseName='TLLexper_n1m1N64M48_',n=1,m=1,N=64,M=48)
+    # print('Done with PROBLEM LIST 0')
 
-    # PROBLEM LIST 0
-    idx = 2
-    generateTLLExperimentFlat(problemList[idx],baseName='TLLexper_n2m1N32M32_',n=2,m=1,N=32,M=32)
-    print('Done with PROBLEM LIST 0')
+    # # PROBLEM LIST 0
+    # idx = 2
+    # generateTLLExperimentFlat(problemList[idx],baseName='TLLexper_n2m1N32M32_',n=2,m=1,N=32,M=32)
+    # print('Done with PROBLEM LIST 0')
 
-    # PROBLEM LIST 0
-    idx = 3
-    generateTLLExperimentFlat(problemList[idx],baseName='TLLexper_n2m1N64M48_',n=2,m=1,N=64,M=48)
-    print('Done with PROBLEM LIST 0')
+    # # PROBLEM LIST 0
+    # idx = 3
+    # generateTLLExperimentFlat(problemList[idx],baseName='TLLexper_n2m1N64M48_',n=2,m=1,N=64,M=48)
+    # print('Done with PROBLEM LIST 0')
 
     # # PROBLEM LIST 1
     # idx = 1
