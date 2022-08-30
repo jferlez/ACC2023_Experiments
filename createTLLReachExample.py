@@ -232,9 +232,9 @@ if __name__=='__main__':
     with open('sizeVsTime_n2_input.p','rb') as fp:
         originalExperiment = pickle.load(fp)
 
-    problemList = originalExperiment[0:3]
+    problemList = originalExperiment[0:1]
     for ii in range(len(problemList)):
-        problemList[ii] = problemList[ii][0:10]
+        problemList[ii] = problemList[ii][0:1]
     
     for idx in range(len(problemList)):
         addTLLAndPathToExisting(problemList[idx],basePath='sizeVsTime_M='+str(problemList[idx][0]['M']))
