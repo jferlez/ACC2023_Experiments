@@ -33,3 +33,5 @@ docker exec matlab sh -c "wget https://www.mathworks.com/mpm/glnxa64/mpm && \
         --products MATLAB Computer_Vision_Toolbox Control_System_Toolbox Deep_Learning_Toolbox Image_Processing_Toolbox Optimization_Toolbox Parallel_Computing_Toolbox Symbolic_Math_Toolbox System_Identification_Toolbox Statistics_and_Machine_Learning_Toolbox && \
     sudo rm -f mpm /tmp/mathworks_root.log && \
     sudo ln -s /opt/matlab/bin/matlab /usr/local/bin/matlab"
+
+docker commit matlab jferlez/matlab_docker:latest
