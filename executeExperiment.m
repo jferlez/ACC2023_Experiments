@@ -52,7 +52,8 @@ reachResult.time = toc;
 reachResult.reachBox = reachResult.reachStar.getBox();
 reachResult.lb = reachResult.reachBox.lb;
 reachResult.ub = reachResult.reachBox.ub;
-save([basePath '/' baseName '.mat'],'reachResult');
+mkdir('mat_results')
+save(['mat_results/' baseName '.mat'],'reachResult');
 
 h5create([moduleName '.h5'],['/' baseName '/lb'],size(reachResult.lb));
 h5write([moduleName '.h5'],['/' baseName '/lb'],reachResult.lb);

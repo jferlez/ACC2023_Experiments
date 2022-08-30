@@ -125,10 +125,11 @@ def addTLLAndPathToExisting(instances,baseName='TLLExperiment',basePath=None):
         basePath = './' + baseName + date_time
     basePath = basePath.rstrip('/')
     os.mkdir(basePath)
+    os.mkdir(os.path.join(basePath,baseName))
     for k in range(len(instances)):
         instances[k]['basePath'] = basePath
         instances[k]['baseName'] = baseName + '_instance_' + str(k).zfill(int(np.log10(len(instances))+1)) + date_time
-        instances[k]['TLLnetwork'] = basePath + '/' + instances[k]['baseName'] + '.h5'
+        instances[k]['TLLnetwork'] = baseName + '/' + instances[k]['baseName'] + '.h5'
         temp = {}
         temp['localLinearFns'] = instances[k]['TLLparameters']['localLinearFunctions']
         for out in range(len(temp['localLinearFns'])):
@@ -136,8 +137,10 @@ def addTLLAndPathToExisting(instances,baseName='TLLExperiment',basePath=None):
         temp['selectorSets'] = [ [ TLLnet.selectorMatrixToSet(sMat) for sMat in sOutputs] for sOutputs in instances[k]['TLLparameters']['selectorMatrices'] ]
         temp['TLLFormatVersion'] = 1
         tllExample = TLLnet.TLLnet.fromTLLFormat(instances[k] | temp)
-        tllExample.createKeras(incBias=True,flat=False)
-        tllExample.model.save(instances[k]['TLLnetwork'])
+        tllExample.createKeras(incBias=True,flat=True)
+        tllExample.model(tf.keras.Input((instances[k]['n'],)))
+        tllExample.model.get_input_shape_at(0)
+        tllExample.model.save(os.path.join(basePath,instances[k]['TLLnetwork']))
         tllExample = 0
         importlib.reload(tf)
         importlib.reload(TLLnet)
@@ -145,18 +148,49 @@ def addTLLAndPathToExisting(instances,baseName='TLLExperiment',basePath=None):
 
 
 def saveAndGenerateMATLABInterface(experimentGroup,moduleName='TLLExperimentGroup'):
-    date_time = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-    moduleName = moduleName + date_time
-    with open(moduleName + '.p','wb') as fp:
-        pickle.dump(experimentGroup,fp,protocol=pickle.HIGHEST_PROTOCOL)
-    with open(moduleName + '.py','wb') as fp:
-        fp.write(b'\n\
+    if type(experimentGroup) != list or len(experimentGroup) == 0:
+        print('Invalid experiment group')
+        return
+    for idx in range(len(experimentGroup)):
+        if len(experimentGroup[idx]) > 0 and 'basePath' in experimentGroup[idx][0]:
+            basePath = experimentGroup[idx][0]['basePath']
+        else:
+            print('Invalid problem group...')
+            return
+        date_time = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+        moduleName = moduleName + date_time
+        with open( os.path.join(  basePath ,  moduleName + '.p'),'wb') as fp:
+            pickle.dump(experimentGroup,fp,protocol=pickle.HIGHEST_PROTOCOL)
+        with open(os.path.join( basePath, moduleName + '.py' ),'wb') as fp:
+            fp.write(b'\n\
 import pickle\n\
 def f(path=\'.\'):\n\
     with open(path.rstrip(\'/\')+\'/' + str.encode(moduleName) + b'.p\', \'rb\') as fp:\n\
         retVal = pickle.load(fp)\n\
     return retVal\n\
         \n')
+        with open(os.path.join(basePath, 'run_experiment.m'),'w') as fp:
+            print('% pe = pyenv(\'Version\',\'/opt/local/bin/python3.9\');\n\
+\n\
+moduleName = \'' + moduleName + '\';\n\
+numCores = 1;\n\
+\n\
+if count(py.sys.path,\'\') == 0\n\
+    insert(py.sys.path,int32(0),\'\');\n\
+end\n\
+translationModule = py.importlib.import_module(moduleName);\n\
+\n\
+experCell = eval(strcat(\'py.\', moduleName, \'.f(py.str(pwd))\'));\n\
+\
+results = cell(size(experCell));\n\
+for ii = 1:numel(experCell)\n\
+    results{ii} = cell(size(experCell{ii}));\n\
+    for jj = 1:numel(results{ii})\n\
+        results{ii}{jj} = executeExperiment(experCell{ii}{jj},moduleName,numCores);\n\
+    end\n\
+end\n\
+', file=fp)
+        os.popen('cp executeExperiment.m ' + basePath)
 
 
 if __name__=='__main__':
@@ -203,7 +237,7 @@ if __name__=='__main__':
         problemList[ii] = problemList[ii][0:10]
     
     for idx in range(len(problemList)):
-        addTLLAndPathToExisting(problemList[idx],baseName='sizeVsTime_M='+str(problemList[idx][0]['M']))
+        addTLLAndPathToExisting(problemList[idx],basePath='sizeVsTime_M='+str(problemList[idx][0]['M']))
 
 
     # Generate a list for this problem group:
@@ -244,6 +278,7 @@ if __name__=='__main__':
     # print('Done with PROBLEM LIST 2')
 
     # Create a MATLAB interface for this problem group:
-    saveAndGenerateMATLABInterface(problemList)
+    for idx in range(len(problemList)):
+        saveAndGenerateMATLABInterface([problemList[idx]])
 
     pass
