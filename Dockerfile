@@ -35,10 +35,12 @@ RUN ssh-keygen -t rsa -q -f /home/${USER_NAME}/.ssh/id_rsa -N ""
 RUN cat /home/${USER_NAME}/.ssh/id_rsa.pub >> /home/${USER_NAME}/.ssh/authorized_keys
 
 RUN git clone --recursive https://github.com/verivital/nnv.git
-WORKDIR /home/${USER_NAME}/tools/nnv/engine
+WORKDIR /home/${USER_NAME}/tools/nnv/code/nnv/engine
 RUN git clone https://github.com/verivital/nnvmt nnmt
 COPY ./DockerConfig/kerasPrinter.py ./nnmt/src
 
+
+RUN matlab -r "install; addpath('/home/james/tools/nnv/code/nnv/engine/nnmt'); savepath; exit"
 
 
 
