@@ -46,19 +46,54 @@ end
 if numCores > 1
     reachResult.nn.start_pool(numCores);
 end
+% tic;
+% reachResult.reachStar = reachResult.nn.reach(inputStar,'approx-star',numCores);
+% reachResult.time = toc;
+% reachResult.reachBox = reachResult.reachStar.getBox();
+% reachResult.lb = reachResult.reachBox.lb;
+% reachResult.ub = reachResult.reachBox.ub;
+
+
+Ts = 0.01;
+A = double(exper{'system'}{'A'});
+B = double(exper{'system'}{'B'});
+sz  = size(A);
+n = sz(1);
+sz = size(B);
+m = sz(2);
+C = eye(n);
+D = zeros(n,m);
+
+NN_Controller = reachResult.nn; % feedforward neural network controller
+Plant = DLinearODE(A, B, C, D, Ts);
+feedbackMap = [0]; % feedback map, y[k] 
+
+ncs = NNCS(NN_Controller, Plant, feedbackMap); % the neural network control system
+
+args.numSteps = 2;
+args.numCores = 1;
+args.ref_input = [];
+args.reachMethod = 'approx-star';
+args.init_set = inputStar;
+
 tic;
-reachResult.reachStar = reachResult.nn.reach(inputStar,'approx-star',numCores);
+[P1, reachTime1] = ncs.reach(args);
 reachResult.time = toc;
-reachResult.reachBox = reachResult.reachStar.getBox();
-reachResult.lb = reachResult.reachBox.lb;
-reachResult.ub = reachResult.reachBox.ub;
+reachResult.reachStars = P1;
+reachResult.reachBoxes = [];
+reachResult.reachBounds = [];
+for ii = 1:length(P1)
+    reachResult.reachBoxes(ii) = reachResult.reachStars(ii).getBox();
+end
 mkdir('mat_results')
 save(['mat_results/' baseName '.mat'],'reachResult');
 
-h5create([moduleName '.h5'],['/' baseName '/lb'],size(reachResult.lb));
-h5write([moduleName '.h5'],['/' baseName '/lb'],reachResult.lb);
-h5create([moduleName '.h5'],['/' baseName '/ub'],size(reachResult.ub));
-h5write([moduleName '.h5'],['/' baseName '/ub'],reachResult.ub);
+for ii = 1:length(reachResult.reachBoxes)
+    h5create([moduleName '.h5'],['/' baseName '/lb_T=' num2str(ii)],size(reachResult.reachBoxes(ii).lb));
+    h5write([moduleName '.h5'],['/' baseName '/lb_T=' num2str(ii)],reachResult.reachBoxes(ii).lb);
+    h5create([moduleName '.h5'],['/' baseName '/ub_T=' num2str(ii)],size(reachResult.reachBoxes(ii).ub));
+    h5write([moduleName '.h5'],['/' baseName '/ub_T=' num2str(ii)],reachResult.reachBoxes(ii).ub);
+end
 h5create([moduleName '.h5'],['/' baseName '/timeElapsed'],[1 1]);
 h5write([moduleName '.h5'],['/' baseName '/timeElapsed'],reachResult.time);
 h5create([moduleName '.h5'],['/' baseName '/validationInputs'],size(reachResult.validationInputs));
