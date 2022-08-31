@@ -40,10 +40,6 @@ RUN git clone https://github.com/verivital/nnvmt nnmt
 COPY ./DockerConfig/kerasPrinter.py ./nnmt/src
 
 
-RUN matlab -r "install; addpath('/home/james/tools/nnv/code/nnv/engine/nnmt'); savepath; exit"
-
-
-
 # WORKDIR /home/${USER_NAME}/tools/FastBATLLNN/HyperplaneRegionEnum
 # RUN python3.9 posetFastCharm_numba.py
 
