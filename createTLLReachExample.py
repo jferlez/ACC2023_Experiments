@@ -199,7 +199,7 @@ git pull\n\
 cd \"$SCRIPT_DIR\"\n\
 matlab -r run_experiment\n\
 ssh 10.0.0.10 \"mkdir -p /media/azuredata/' + basePath + '\"\n\
-scp -r ~/acc_code/' + basePath + ' 10.0.0.10:/media/azuredata/' + basePath + '\n\
+scp -r ~/acc23matlab/' + basePath + ' 10.0.0.10:/media/azuredata/' + basePath + '\n\
 pwsh ~/shutdown_self.ps1', file=fp)
         os.popen('chmod 755 ' + os.path.join(basePath, 'run_experiment.sh'))
 

@@ -5,5 +5,5 @@ git pull
 cd "$SCRIPT_DIR"
 matlab -r run_experiment
 ssh 10.0.0.10 "mkdir -p /media/azuredata/minion17"
-scp -r ~/acc_code/minion17 10.0.0.10:/media/azuredata/minion17
+scp -r ~/acc23matlab/minion17 10.0.0.10:/media/azuredata/minion17
 pwsh ~/shutdown_self.ps1
