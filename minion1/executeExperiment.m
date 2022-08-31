@@ -80,19 +80,20 @@ tic;
 [P1, reachTime1] = ncs.reach(args);
 reachResult.time = toc;
 reachResult.reachStars = P1;
-reachResult.reachBoxes = [];
-reachResult.reachBounds = [];
+reachResult.reachBoxes = {};
+reachResult.reachBounds = {};
 for ii = 1:length(P1)
-    reachResult.reachBoxes(ii) = reachResult.reachStars(ii).getBox();
+    reachResult.reachBoxes{ii} = reachResult.reachStars(ii).getBox();
+    reachResult.reachBounds{ii} = [reachResult.reachBoxes{ii}.lb; reachResult.reachBoxes{ii}.ub];
 end
 mkdir('mat_results')
 save(['mat_results/' baseName '.mat'],'reachResult');
 
 for ii = 1:length(reachResult.reachBoxes)
-    h5create([moduleName '.h5'],['/' baseName '/lb_T=' num2str(ii)],size(reachResult.reachBoxes(ii).lb));
-    h5write([moduleName '.h5'],['/' baseName '/lb_T=' num2str(ii)],reachResult.reachBoxes(ii).lb);
-    h5create([moduleName '.h5'],['/' baseName '/ub_T=' num2str(ii)],size(reachResult.reachBoxes(ii).ub));
-    h5write([moduleName '.h5'],['/' baseName '/ub_T=' num2str(ii)],reachResult.reachBoxes(ii).ub);
+    h5create([moduleName '.h5'],['/' baseName '/lb_T=' num2str(ii)],size(reachResult.reachBoxes{ii}.lb));
+    h5write([moduleName '.h5'],['/' baseName '/lb_T=' num2str(ii)],reachResult.reachBoxes{ii}.lb);
+    h5create([moduleName '.h5'],['/' baseName '/ub_T=' num2str(ii)],size(reachResult.reachBoxes{ii}.ub));
+    h5write([moduleName '.h5'],['/' baseName '/ub_T=' num2str(ii)],reachResult.reachBoxes{ii}.ub);
 end
 h5create([moduleName '.h5'],['/' baseName '/timeElapsed'],[1 1]);
 h5write([moduleName '.h5'],['/' baseName '/timeElapsed'],reachResult.time);
