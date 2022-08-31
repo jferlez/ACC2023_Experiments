@@ -170,7 +170,7 @@ def f(path=\'.\'):\n\
     return retVal\n\
         \n')
         with open(os.path.join(basePath, 'run_experiment.m'),'w') as fp:
-            print('% pe = pyenv(\'Version\',\'/opt/local/bin/python3.9\');\n\
+            print('% pe = pyenv(\'Version\',\'/usr/bin/python3.9\');\n\
 \n\
 moduleName = \'' + moduleName + '\';\n\
 numCores = 1;\n\
