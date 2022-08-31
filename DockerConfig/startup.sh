@@ -55,6 +55,8 @@ done
 #PYPATH="/home/$USER/tools/FastBATLLNN:/home/$USER/tools/FastBATLLNN/HyperplaneRegionEnum:/home/$USER/tools/FastBATLLNN/TLLnet:/home/$USER/tools/nnenum/src/nnenum"
 
 if [ "$MPIHOSTS" != "" ]; then
+    echo "$MPIHOSTS" | sed -e 's/,/\
+/g' -e 's/:/    /g' >> /etc/hosts
     echo '#!/bin/bash' > /home/$USER/run_all.sh
     for vm in `echo "$MPIHOSTS" | sed -e 's/,/\n/g'`; do
         IFS=':' read -r -a array <<< "$vm"
