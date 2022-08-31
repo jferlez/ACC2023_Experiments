@@ -70,7 +70,7 @@ feedbackMap = [0]; % feedback map, y[k]
 
 ncs = NNCS(NN_Controller, Plant, feedbackMap); % the neural network control system
 
-args.numSteps = 2;
+args.numSteps = 10;
 args.numCores = 1;
 args.ref_input = [];
 args.reachMethod = 'approx-star';
