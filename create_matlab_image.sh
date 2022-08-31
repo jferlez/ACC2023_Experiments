@@ -25,6 +25,8 @@ docker exec matlab sudo apt-get -y update
 docker exec matlab sudo apt-get -y upgrade
 docker exec matlab sudo apt-get -y install python3-pip python3.9 python3.9-dev cmake ssh git gfortran gfortran-10 gcc-10 clang-11 clang-12 vim emacs nano screen tmux ipython3 openssh-server sudo curl universal-ctags ripgrep psmisc locales clangd libpython3.9-dev
 
+docker exec matlab sudo pip install tensorflow tensorflow_probability onnx_tf onnxmltools
+
 docker exec matlab sh -c "wget https://www.mathworks.com/mpm/glnxa64/mpm && \
     chmod +x mpm && \
     sudo ./mpm install \
