@@ -191,6 +191,14 @@ for ii = 1:numel(experCell)\n\
 end\n\
 ', file=fp)
         os.popen('cp executeExperiment.m ' + basePath)
+        with open(os.path.join(basePath, 'run_experiment.sh'), 'w') as fp:
+            print('#!/bin/bash\n\
+SCRIPT_DIR=$( cd -- \"$( dirname -- \"${BASH_SOURCE[0]}\" )\" &> /dev/null && pwd )\n\
+cd \"$SCRIPT_DIR\"\n\
+matlab -r run_experiment\n\
+ssh 10.0.0.10 \"mkdir -p /media/azuredata/' + basePath + '\"\n\
+scp ~/acc_code/' + basePath + ' 10.0.0.10:/media/azuredata/' + basePath + '\n\
+pwsh ~/shutdown.ps1', file=fp)
 
 
 if __name__=='__main__':
