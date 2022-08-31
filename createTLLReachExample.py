@@ -244,8 +244,8 @@ if __name__=='__main__':
         originalExperiment = pickle.load(fp)
 
     problemList = []
-    for jj in range(2):
-        for ii in range(1):
+    for jj in range(3):
+        for ii in range(10):
             problemList.append([originalExperiment[jj][ii]])
     
     for idx in range(len(problemList)):
