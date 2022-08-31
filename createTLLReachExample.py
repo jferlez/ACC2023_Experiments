@@ -194,6 +194,8 @@ end\n\
         with open(os.path.join(basePath, 'run_experiment.sh'), 'w') as fp:
             print('#!/bin/bash\n\
 SCRIPT_DIR=$( cd -- \"$( dirname -- \"${BASH_SOURCE[0]}\" )\" &> /dev/null && pwd )\n\
+cd ..\n\
+git pull\n\
 cd \"$SCRIPT_DIR\"\n\
 matlab -r run_experiment\n\
 ssh 10.0.0.10 \"mkdir -p /media/azuredata/' + basePath + '\"\n\
