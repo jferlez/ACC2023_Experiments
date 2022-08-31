@@ -240,12 +240,13 @@ if __name__=='__main__':
     with open('sizeVsTime_n2_input.p','rb') as fp:
         originalExperiment = pickle.load(fp)
 
-    problemList = originalExperiment[0:1]
-    for ii in range(len(problemList)):
-        problemList[ii] = problemList[ii][0:1]
+    problemList = []
+    for jj in range(2):
+        for ii in range(1):
+            problemList.append([originalExperiment[jj][ii]])
     
     for idx in range(len(problemList)):
-        addTLLAndPathToExisting(problemList[idx],basePath='sizeVsTime_M='+str(problemList[idx][0]['M']))
+        addTLLAndPathToExisting(problemList[idx],basePath='minion' + str(idx))
 
 
     # Generate a list for this problem group:
