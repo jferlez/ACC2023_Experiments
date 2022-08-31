@@ -65,6 +65,6 @@ docker start pre-nnv
 # install nnv
 docker exec pre-nnv sudo -u ${user} sh -c "cd ~/tools/nnv/code/nnv && matlab -r \"install; addpath('/home/james/tools/nnv/code/nnv/engine/nnmt'); savepath; exit\""
 
-docker commit pre-nnv acc-matlab-run:${user}
+docker commit pre-nnv acc23matlab-run:${user}
 docker container stop pre-nnv
 docker container rm pre-nnv
