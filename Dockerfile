@@ -58,6 +58,20 @@ RUN echo "set-option -gas terminal-overrides \"*:RGB\"" >> /home/${USER_NAME}/.t
 USER root
 RUN chown -R ${UID}:${GID} /home/${USER_NAME}/
 
+RUN echo "#!/bin/sh" > /usr/local/bin/bk
+RUN echo "(" >>  /usr/local/bin/bk
+RUN echo 'echo "Date: `date`"' >>  /usr/local/bin/bk
+RUN echo 'echo "Command: $*"' >>  /usr/local/bin/bk
+RUN echo 'nohup "$@"' >>  /usr/local/bin/bk
+RUN echo 'echo "Completed: `date`"' >>  /usr/local/bin/bk
+RUN echo "" >>  /usr/local/bin/bk
+RUN echo ") >>\${LOGFILE:=log.out} 2>&1 &" >>  /usr/local/bin/bk
+RUN chmod 755 /usr/local/bin/bk
+
+RUN sed -i -E -e 's/\s*#\s*PasswordAuthentication\s+(yes|no)/PasswordAuthentication no/' /etc/ssh/sshd_config
+RUN service ssh start
+EXPOSE 3000
+
 COPY ./DockerConfig/startup.sh /usr/local/bin/startup.sh
 RUN chmod 755 /usr/local/bin/startup.sh
 
