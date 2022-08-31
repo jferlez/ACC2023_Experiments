@@ -60,7 +60,7 @@ if [ "$MPIHOSTS" != "" ]; then
         IFS=':' read -r -a array <<< "$vm"
         ip="${array[0]}"
         hostN="${array[1]}"
-        echo "ssh -p 3000 $ip \"cd ~/acc23matlab/$hostN && bk run_experiment.sh\"" >> /home/$USER/run_all.sh
+        echo "ssh -p 3000 $ip \"cd ~/acc23matlab/$hostN && bk ~/acc23matlab/$hostN/run_experiment.sh\"" >> /home/$USER/run_all.sh
     done
     chmod 755 /home/$USER/run_all.sh
 fi
