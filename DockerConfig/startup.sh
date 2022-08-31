@@ -52,20 +52,19 @@ for fname in authorized_keys known_hosts; do
     fi
 done
 
-PYPATH="/home/$USER/tools/FastBATLLNN:/home/$USER/tools/FastBATLLNN/HyperplaneRegionEnum:/home/$USER/tools/FastBATLLNN/TLLnet:/home/$USER/tools/nnenum/src/nnenum"
+#PYPATH="/home/$USER/tools/FastBATLLNN:/home/$USER/tools/FastBATLLNN/HyperplaneRegionEnum:/home/$USER/tools/FastBATLLNN/TLLnet:/home/$USER/tools/nnenum/src/nnenum"
 
 if [ "$MPIHOSTS" != "" ]; then
     echo "$MPIHOSTS" | sed -e 's/,/\
-/g' -e 's/:/    /g' >> /etc/hosts
-    HOSTLIST=`echo "$MPIHOSTS" | sed -E -e 's/:[^:,]+/:-1/g'`
-    echo "#!/bin/bash
-mpirun $MPIARGS -mca plm_rsh_args \"-p 3000\" -np $CORES -host $HOSTLIST -x PYTHONPATH=\"$PYPATH:\$PYTHONPATH\" /usr/bin/python3.9 \"\$@\"" > /usr/local/bin/charming
-else
-    echo "#!/bin/bash
-PYTHONPATH=\"$PYPATH:\$PYTHONPATH\"
-charmrun +p$CORES \"\$@\"" >> /usr/local/bin/charming
+/g' > /home/$USER/clusterList
+    for vm in `cat /home/$USER/clusterlist`; do
+        IFS=':' read -r -a array <<< "$vm"
+        ip="${array[0]}"
+        hostN="${array[1]}"
+        echo "ssh -p 3000 $ip \"cd ~/acc23matlab/$hostN && bk run_experiment.sh\"" >> /home/$USER/run_all.sh
+    done
+    chmod 755 /home/$USER/run_all.sh
 fi
-chmod 755 /usr/local/bin/charming
 
 if [ "$SERVER" = "server" ]; then
 	sudo -u $USER /usr/local/bin/charming /home/$USER/tools/FastBATLLNN/FastBATLLNNServer.py &> "/home/$USER/results/FastBATLLNN_server_log.out" &
