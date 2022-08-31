@@ -199,6 +199,7 @@ matlab -r run_experiment\n\
 ssh 10.0.0.10 \"mkdir -p /media/azuredata/' + basePath + '\"\n\
 scp ~/acc_code/' + basePath + ' 10.0.0.10:/media/azuredata/' + basePath + '\n\
 pwsh ~/shutdown_self.ps1', file=fp)
+        os.popen('chmod 755 ' + os.path.join(basePath, 'run_experiment.sh'))
 
 
 if __name__=='__main__':
