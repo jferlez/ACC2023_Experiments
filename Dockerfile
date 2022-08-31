@@ -43,8 +43,8 @@ COPY ./DockerConfig/kerasPrinter.py ./nnmt/src
 # WORKDIR /home/${USER_NAME}/tools/FastBATLLNN/HyperplaneRegionEnum
 # RUN python3.9 posetFastCharm_numba.py
 
-WORKDIR /home/${USER_NAME}/acc_code
-COPY * .
+WORKDIR /home/${USER_NAME}
+RUN git clone https://github.com/jferlez/ACC2023_Experiments acc_code
 
 WORKDIR /home/${USER_NAME}
 # RUN echo "export PYTHONPATH=/home/${USER_NAME}/tools/FastBATLLNN:/home/${USER_NAME}/tools/FastBATLLNN/HyperplaneRegionEnum:/home/${USER_NAME}/tools/FastBATLLNN/TLLnet:/home/${USER_NAME}/tools/nnenum/src/nnenum" >> /home/${USER_NAME}/.bashrc
