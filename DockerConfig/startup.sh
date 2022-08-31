@@ -55,9 +55,8 @@ done
 #PYPATH="/home/$USER/tools/FastBATLLNN:/home/$USER/tools/FastBATLLNN/HyperplaneRegionEnum:/home/$USER/tools/FastBATLLNN/TLLnet:/home/$USER/tools/nnenum/src/nnenum"
 
 if [ "$MPIHOSTS" != "" ]; then
-    echo "$MPIHOSTS" | sed -e 's/,/\
-/g' > /home/$USER/clusterList
-    for vm in `cat /home/$USER/clusterlist`; do
+    echo '#!/bin/bash' > /home/$USER/run_all.sh
+    for vm in `echo "$MPIHOSTS" | sed -e 's/,/\n/g'`; do
         IFS=':' read -r -a array <<< "$vm"
         ip="${array[0]}"
         hostN="${array[1]}"
