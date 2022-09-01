@@ -27,7 +27,7 @@ docker exec matlab sudo apt-get -y install python3-pip python3.9 python3.9-dev c
 
 docker exec matlab sudo python3.9 -m pip install tensorflow tensorflow_probability onnx_tf onnxmltools
 
-docker exec matlab wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
+docker exec matlab wget -q "https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb"
 docker exec matlab sudo dpkg -i packages-microsoft-prod.deb
 docker exec matlab rm packages-microsoft-prod.deb
 docker exec matlab sudo apt-get update
