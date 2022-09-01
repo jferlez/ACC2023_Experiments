@@ -148,7 +148,7 @@ then
     AZUREBIND="-v /media/azuredata:/media/azuredata"
 fi
 
-if [ "$SWAP" = "on"  ] and [ -e /dev/sdb1 ]
+if [ "$SWAP" = "on"  ] && [ -e /dev/sdb1 ]
 then
     echo "Swap space requested, and temporary device found... Activating swap..."
     sudo fallocate -l 32G /mnt/swapfile
