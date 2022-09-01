@@ -148,27 +148,13 @@ then
     AZUREBIND="-v /media/azuredata:/media/azuredata"
 fi
 
-if [ SWAP -eq "on"  ] and [ -e /dev/sdb ]
+if [ "$SWAP" = "on"  ] and [ -e /dev/sdb1 ]
 then
     echo "Swap space requested, and temporary device found... Activating swap..."
-    sudo mkdir -p /media/swapdrive
-    DEV=/dev/sdb
-    PART=${DEV}1
-    sleep 2
-    sudo parted $DEV --script mklabel gpt mkpart xfspart xfs 0% 100%
-    sleep 2
-    sudo mkfs.xfs $PART
-    sleep 2
-    sudo partprobe $PART 
-    sleep 2
-    UUID=$(sudo blkid | grep $DEV | sed -E -e 's/.*\W+UUID="([A-Za-z0-9\-]*)".*/\1/')
-    sudo sh -c "echo 'UUID=$UUID  /media/swapdrive  xfs   defaults,nofail,noauto  1  2' >> /etc/fstab" 
-    sudo mount /media/swapdrive
-    sudo chmod -R 777 /media/swapdrive
-    sudo fallocate -l 32G /media/swapdrive/swapfile
-    sudo chmod 600 /media/swapdrive/swapfile
-    sudo mkswap /media/swapdrive/swapfile
-    sudo swapon /media/swapdrive/swapfile
+    sudo fallocate -l 32G /mnt/swapfile
+    sudo chmod 600 /mnt/swapfile
+    sudo mkswap /mnt/swapfile
+    sudo swapon /mnt/swapfile
 fi
 
 
