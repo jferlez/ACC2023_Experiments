@@ -1,0 +1,2 @@
+kill -9 `ps aux | grep prefersoftwareopengl | head -n 1 | sed -E -e 's/james[\ ]+([0-9]+).*/\1/'`
+
