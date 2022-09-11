@@ -7,7 +7,7 @@ import re
 import h5py
 
 if __name__ == '__main__':
-    
+
     resultsDir = os.path.abspath( \
             os.path.join( \
                 os.path.dirname( os.path.abspath(sys.argv[0]) ),
@@ -16,7 +16,7 @@ if __name__ == '__main__':
             ) \
         )
     resultsOutputFile = os.path.join(resultsDir,'results_nnv.p')
-    
+
     baseName = 'minion'
     experGroupName = 'TLLExperimentGroup'
 
@@ -32,7 +32,7 @@ if __name__ == '__main__':
         if not os.path.isdir(r):
             print(f'ERROR: {d} is not a valid directory... skipping...')
             continue
-        
+
         workerContents = os.listdir(r)
 
         for pname in workerContents:
@@ -56,7 +56,7 @@ if __name__ == '__main__':
                 if re.match(r'^' + experGroupName + r'.*\.h5$',os.path.basename(os.path.join(r,pname,pname,fname))):
                     resultsFile = os.path.join(r,pname,pname,fname)
                     break
-            
+
             if resultsFile is None:
                 print(f'ERROR: no matching .h5 file in {os.path.join(r,pname)}')
                 logFile = None
